@@ -8,8 +8,12 @@ storage:
   kind: hostvol
   hostvol:
     path: /data/valheim
+  nfs:
+    path:
+    server:
 
 networking:
   serviceType: LoadBalancer
+  loadBalancerIP:
 
 nodeSelector: {}

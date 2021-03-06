@@ -32,7 +32,7 @@ spec:
           name: game2
         - containerPort: 2458
           name: game3
-        {{ if eq .Values.storage.kind "hostvol" }}
+        {{ if or (eq .Values.storage.kind "hostvol") (eq .Values.storage.kind "nfs") }}
         volumeMounts:
         - mountPath: /config
           name: gamefiles
@@ -44,5 +44,11 @@ spec:
         hostPath:
           path: {{ .Values.storage.hostvol.path }}
           type: Directory
+      {{ else if eq .Values.storage.kind "nfs" }}
+      volumes:
+      - name: gamefiles
+        nfs:
+          path: {{ required "storage.nfs.path required when using NFS" .Values.storage.nfs.path }}
+          server: {{ required "storage.nfs.server required when using NFS"  .Values.storage.nfs.server }}
       {{ end }}
 

@@ -19,3 +19,4 @@ spec:
   type: {{ .Values.networking.serviceType }}
   selector:
     app: valheim-server
+  loadBalancerIP: {{ .Values.networking.loadBalancerIP }}
