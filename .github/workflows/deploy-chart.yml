@@ -26,13 +26,13 @@ jobs:
       - name: Release
         run: |
           export GIT_EMAIL=${{ secrets.GIT_EMAIL }}
-          export CH_TOKEN=${{ secrets.GIT_TOKEN }}
-          export GIT_REPOSITORY_URL=https://github.com/${{ github.actor }}/valheim-k8s
+          export CH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          export GIT_REPOSITORY_URL=https://github.com/${{ github.repository }}
           
           version=$(cat version)
           
           helm package --version=$version ./chart --destination .deploy
-          cr upload ./chart --owner ${{ github.actor }} -r valheim-k8s --token $CH_TOKEN -p .deploy || echo "$version already exists"
+          cr upload ./chart --owner ${{ github.repository_owner }} -r valheim-k8s --token $CH_TOKEN -p .deploy || echo "$version already exists"
       
       - name: Checkout gh-pages branch
         uses: actions/checkout@v1
@@ -42,7 +42,7 @@ jobs:
           
       - name: Update chart index
         run: |
-          cr index -i ./index.yaml -p .deploy --owner ${{ github.actor }} --repo valheim-k8s || echo "index.yaml did not change"
+          cr index -i ./index.yaml -p .deploy --owner ${{ github.repository_owner }} --repo valheim-k8s || echo "index.yaml did not change"
       
       - name: commit index changes
         run: |
@@ -54,5 +54,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GIT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
